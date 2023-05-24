@@ -1,14 +1,14 @@
 package test.java.com.browserstack;
 
 import java.util.List;
-
+import java.util.HashMap;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.Parameters;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import java.net.URL;
 import org.openqa.selenium.WebDriver;
@@ -19,21 +19,19 @@ public class BStackDemoTest extends SeleniumTest {
 	public void testBS(String url, String username, String password) throws Exception {
 		String username_bs = System.getenv("BROWSERSTACK_USERNAME");
 		String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
-		String buildName = System.getenv("BROWSERSTACK_BUILD_NAME");
-		String browserstackLocal = System.getenv("BROWSERSTACK_LOCAL");
-		String browserstackLocalIdentifier = System.getenv("BROWSERSTACK_LOCAL_IDENTIFIER");
+		String buildName = System.getenv("JENKINS_LABEL");
 		
-		DesiredCapabilities capabilities = new DesiredCapabilities();
-		capabilities.setCapability("os", "Windows");
-		capabilities.setCapability("os_version", "10");
-		capabilities.setCapability("browser", "chrome");
-		capabilities.setCapability("browser_version", "latest");
-		capabilities.setCapability("name", "BStack-[Java] Sample Test"); // test buildName
-		capabilities.setCapability("build", buildName); // CI/CD job name using BROWSERSTACK_BUILD_NAME env variable
-		capabilities.setCapability("browserstack.local", browserstackLocal);
-		capabilities.setCapability("browserstack.localIdentifier", browserstackLocalIdentifier);
+		MutableCapabilities capabilities = new MutableCapabilities();
+		capabilities.setCapability("browserName", "Chrome");
+		capabilities.setCapability("browserVersion", "100.0");
+		HashMap<String, Object> browserstackOptions = new HashMap<String, Object>();
+		browserstackOptions.put("os", "Windows");
+		browserstackOptions.put("osVersion", "10");
+		browserstackOptions.put("sessionName", "BStack Build Name: " + buildName);
+		browserstackOptions.put("seleniumVersion", "4.0.0");
+		capabilities.setCapability("bstack:options", browserstackOptions);
 
-		driver = new RemoteWebDriver(new URL("https://" + username_bs + ":" + accessKey + "@hub.browserstack.com/wd/hub"), capabilities);
+		WebDriver driver = new RemoteWebDriver(new URL("https://" + username_bs + ":" + accessKey + "@hub.browserstack.com/wd/hub"), capabilities);
 
 		driver.get(url);
 		driver.manage().window().maximize();
