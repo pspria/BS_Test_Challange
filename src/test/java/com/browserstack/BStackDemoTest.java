@@ -185,6 +185,8 @@ public class BStackDemoTest extends SeleniumTest {
 		browserstackOptions.put("seleniumVersion", "4.8.0");
 		browserstackOptions.put("projectName", "BS_Test_Challange");
 		browserstackOptions.put("buildName", buildName);
+		browserstackOptions.put("local", browserstackLocal);
+		browserstackOptions.put("localIdentifier", browserstackLocalIdentifier);
 		capabilities.setCapability("bstack:options", browserstackOptions);
 
 		try {
