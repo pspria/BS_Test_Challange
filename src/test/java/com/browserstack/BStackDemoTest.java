@@ -182,7 +182,7 @@ public class BStackDemoTest extends SeleniumTest {
 		browserstackOptions.put("osVersion", "10");
 		browserstackOptions.put("browserVersion", "latest");
 		browserstackOptions.put("local", "false");
-		browserstackOptions.put("seleniumVersion", "4.9.0");
+		browserstackOptions.put("seleniumVersion", "4.8.0");
 		browserstackOptions.put("projectName", "BS_Test_Challange");
 		browserstackOptions.put("buildName", buildName);
 		capabilities.setCapability("bstack:options", browserstackOptions);

@@ -1,15 +1,22 @@
- pipeline {
+pipeline {
    agent any
-   
+
    stages {
-       stage('setup') {
+      stage('Build') {
          steps {
-             browserstack(credentialsId: '1400c10a-5cc7-4626-b3ac-3d7ba54bd1fb') {
-             	sh 'npm install'
-             	sh 'node single.js'
-             	sh 'node parallel.js'
-            }
+            bat 'mvn -B compile'
          }
-       }
-     }
-   }
+      }
+      stage('Test'){
+          steps{
+              bat 'mvn -B clean install'
+              cucumber failedFeaturesNumber: -1, failedScenariosNumber: -1, failedStepsNumber: -1, fileIncludePattern: '**/*.json', pendingStepsNumber: -1, skippedStepsNumber: -1, sortingMethod: 'ALPHABETICAL', undefinedStepsNumber: -1
+              }
+      }
+      stage('Archive'){
+          steps{
+              archiveArtifacts 'target/*.jar'
+          }
+      }
+   }
+}
