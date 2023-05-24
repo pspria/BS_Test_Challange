@@ -8,19 +8,41 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.Parameters;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import java.net.URL;
+import org.openqa.selenium.WebDriver;
 
 public class BStackDemoTest extends SeleniumTest {
 	@Parameters({ "url", "username", "password" })
 	@Test
 	public void testBS(String url, String username, String password) throws Exception {
+		String username_bs = System.getenv("BROWSERSTACK_USERNAME");
+		String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
+		String buildName = System.getenv("BROWSERSTACK_BUILD_NAME");
+		String browserstackLocal = System.getenv("BROWSERSTACK_LOCAL");
+		String browserstackLocalIdentifier = System.getenv("BROWSERSTACK_LOCAL_IDENTIFIER");
+		
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+		capabilities.setCapability("os", "Windows");
+		capabilities.setCapability("os_version", "10");
+		capabilities.setCapability("browser", "chrome");
+		capabilities.setCapability("browser_version", "latest");
+		capabilities.setCapability("name", "BStack-[Java] Sample Test"); // test buildName
+		capabilities.setCapability("build", buildName); // CI/CD job name using BROWSERSTACK_BUILD_NAME env variable
+		capabilities.setCapability("browserstack.local", browserstackLocal);
+		capabilities.setCapability("browserstack.localIdentifier", browserstackLocalIdentifier);
+
+		driver = new RemoteWebDriver(new URL("https://" + username_bs + ":" + accessKey + "@hub.browserstack.com/wd/hub"), capabilities);
+
 		driver.get(url);
 		driver.manage().window().maximize();
 
 		try {
-			clickSignIn();
+			clickSignIn(driver);
 		} catch (Exception e) {
-			clickHamburgerMenu();
-			clickSignIn();
+			clickHamburgerMenu(driver);
+			clickSignIn(driver);
 		}
 
 		driver.findElement(By.id("user_email_login")).sendKeys(username);
@@ -62,7 +84,7 @@ public class BStackDemoTest extends SeleniumTest {
 		}
 
 		if (!invitationLinkFound) {
-			invitationLinkFound = findInvitationLinkInHamburgerMenu(invitationLinkFound);
+			invitationLinkFound = findInvitationLinkInHamburgerMenu(invitationLinkFound, driver);
 		}
 
 		// Open the account menu to shows the Sign out button
@@ -96,11 +118,11 @@ public class BStackDemoTest extends SeleniumTest {
 		}
 
 		if (!signoutFound) {
-			clickSignoutInHamburgerMenu();
+			clickSignoutInHamburgerMenu(driver);
 		}
 	}
 
-	private void clickSignIn() {
+	private void clickSignIn(WebDriver driver) {
 		try {
 			WebElement signinLink = driver.findElement(By.linkText("Sign in"));
 			signinLink.click();
@@ -111,7 +133,7 @@ public class BStackDemoTest extends SeleniumTest {
 
 	}
 
-	private void clickHamburgerMenu() {
+	private void clickHamburgerMenu(WebDriver driver) {
 		try {
 			driver.findElement(By.id("hamburger_menu_Layer_1")).click();
 		} catch (Exception e) {
@@ -121,7 +143,7 @@ public class BStackDemoTest extends SeleniumTest {
 
 	}
 
-	private void clickSignoutInHamburgerMenu() {
+	private void clickSignoutInHamburgerMenu(WebDriver driver) {
 		try {
 			driver.findElement(By.id("primary-menu-toggle")).click();
 		} catch (Exception e) {
@@ -137,7 +159,7 @@ public class BStackDemoTest extends SeleniumTest {
 		}
 	}
 
-	private boolean findInvitationLinkInHamburgerMenu(boolean invitationLinkFound) {
+	private boolean findInvitationLinkInHamburgerMenu(boolean invitationLinkFound, WebDriver driver) {
 		try {
 			driver.findElement(By.id("primary-menu-toggle")).click();
 		} catch (Exception e) {
