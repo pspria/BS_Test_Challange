@@ -1,18 +1,31 @@
 package test.java.com.browserstack;
 
+import java.net.MalformedURLException;
 import java.util.List;
-
+import java.util.HashMap;
+import java.net.URL;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.Parameters;
+import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class BStackDemoTest extends SeleniumTest {
+	String username_bs = System.getenv("BROWSERSTACK_USERNAME");
+	String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
+	String buildName = System.getenv("BROWSERSTACK_BUILD_NAME");
+	String browserstackLocal = System.getenv("BROWSERSTACK_LOCAL");
+	String browserstackLocalIdentifier = System.getenv("BROWSERSTACK_LOCAL_IDENTIFIER");
+	String URL = "https://" + username_bs + ":" + accessKey + "@hub.browserstack.com/wd/hub";
+
 	@Parameters({ "url", "username", "password" })
 	@Test
 	public void testBS(String url, String username, String password) throws Exception {
+		driver = launchWebsiteInBS();
 		driver.get(url);
 		driver.manage().window().maximize();
 
@@ -158,5 +171,31 @@ public class BStackDemoTest extends SeleniumTest {
 		}
 
 		return invitationLinkFound;
+	}
+
+	public WebDriver launchWebsiteInBS() {
+		
+		MutableCapabilities capabilities = new MutableCapabilities();
+		capabilities.setCapability("browserName", "Chrome");
+		HashMap<String, Object> browserstackOptions = new HashMap<String, Object>();
+		browserstackOptions.put("os", "Windows");
+		browserstackOptions.put("osVersion", "10");
+		browserstackOptions.put("browserVersion", "latest");
+		browserstackOptions.put("local", "false");
+		browserstackOptions.put("seleniumVersion", "4.9.0");
+		browserstackOptions.put("projectName", "BS_Test_Challange");
+		browserstackOptions.put("buildName", buildName);
+		capabilities.setCapability("bstack:options", browserstackOptions);
+
+		try {
+			driver = new RemoteWebDriver(
+					new URL("https://" + username_bs + ":" + accessKey + "@hub.browserstack.com/wd/hub"), capabilities);
+			
+			return driver;
+
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 }
