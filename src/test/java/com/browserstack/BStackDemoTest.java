@@ -60,15 +60,16 @@ public class BStackDemoTest extends SeleniumTest {
 				break;
 			}
 		}
-		
+
 		if (!invitationLinkFound) {
 			invitationLinkFound = findInvitationLinkInHamburgerMenu(invitationLinkFound);
 		}
 
 		// Open the account menu to shows the Sign out button
 		try {
-			WebElement accountMenuToggleButton = driver.findElement(By.xpath("//*[@id='user-action-parent']//*[@id='account-menu-toggle']"));
-			if(accountMenuToggleButton != null) {
+			WebElement accountMenuToggleButton = driver
+					.findElement(By.xpath("//*[@id='user-action-parent']//*[@id='account-menu-toggle']"));
+			if (accountMenuToggleButton != null) {
 				accountMenuToggleButton.click();
 			}
 		} catch (Exception e) {
@@ -80,22 +81,18 @@ public class BStackDemoTest extends SeleniumTest {
 		// Click on the Sign out button
 		boolean signoutFound = false;
 		try {
-			//System.out.println("start try");
 			WebElement accountMenuDropdownLink = driver.findElement(
 					By.xpath("//*[@id='user-action-parent']//*[@id='account-menu-dropdown']//*[@id='sign_out_link']"));
-			
-			if(accountMenuDropdownLink != null) {
+
+			if (accountMenuDropdownLink != null) {
 				accountMenuDropdownLink.click();
 			}
 			signoutFound = true;
-			//System.out.println("end try");
 		} catch (Exception e) {
-			//System.out.println("start catch");
 			JavascriptExecutor executor = (JavascriptExecutor) driver;
-			executor.executeScript("arguments[0].click();", driver.findElement(By.xpath(
-					"\"//*[@id='user-action-parent']//*[@id='account-menu-dropdown']//*[@id='sign_out_link']\"")));
+			executor.executeScript("arguments[0].click();", driver.findElement(
+					By.xpath("//*[@id='user-action-parent']//*[@id='account-menu-dropdown']//*[@id='sign_out_link']")));
 			signoutFound = true;
-			//System.out.println("end catch");
 		}
 
 		if (!signoutFound) {
@@ -123,7 +120,7 @@ public class BStackDemoTest extends SeleniumTest {
 		}
 
 	}
-	
+
 	private void clickSignoutInHamburgerMenu() {
 		try {
 			driver.findElement(By.id("primary-menu-toggle")).click();
@@ -131,7 +128,7 @@ public class BStackDemoTest extends SeleniumTest {
 			JavascriptExecutor executor = (JavascriptExecutor) driver;
 			executor.executeScript("arguments[0].click();", driver.findElement(By.id("primary-menu-toggle")));
 		}
-		
+
 		try {
 			driver.findElement(By.linkText("Sign out")).click();
 		} catch (Exception e) {
@@ -139,7 +136,7 @@ public class BStackDemoTest extends SeleniumTest {
 			executor.executeScript("arguments[0].click();", driver.findElement(By.linkText("Sign out")));
 		}
 	}
-	
+
 	private boolean findInvitationLinkInHamburgerMenu(boolean invitationLinkFound) {
 		try {
 			driver.findElement(By.id("primary-menu-toggle")).click();
@@ -147,7 +144,7 @@ public class BStackDemoTest extends SeleniumTest {
 			JavascriptExecutor executor = (JavascriptExecutor) driver;
 			executor.executeScript("arguments[0].click();", driver.findElement(By.id("primary-menu-toggle")));
 		}
-		
+
 		List<WebElement> allLinks = driver.findElements(By.tagName("a"));
 
 		for (WebElement link : allLinks) {
@@ -159,7 +156,7 @@ public class BStackDemoTest extends SeleniumTest {
 				break;
 			}
 		}
-		
+
 		return invitationLinkFound;
 	}
 }
